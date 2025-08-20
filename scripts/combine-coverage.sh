@@ -5,7 +5,7 @@ while read FILENAME; do
   LCOV_INPUT_FILES="$LCOV_INPUT_FILES -a \"$PROJECT_ROOT_PATH/coverage/$FILENAME\""
 done < <( ls "$1/coverage/" )
 
-eval lcov "${LCOV_INPUT_FILES}" -o $PROJECT_ROOT_PATH/coverage_report/combined_lcov.info
+eval lcov --ignore-errors unused "${LCOV_INPUT_FILES}" -o $PROJECT_ROOT_PATH/coverage_report/combined_lcov.info
 
 lcov --remove $PROJECT_ROOT_PATH/coverage_report/combined_lcov.info \
   "lib/main_*.dart" \
