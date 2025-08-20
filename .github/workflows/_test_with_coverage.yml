@@ -1,0 +1,40 @@
+name: 🧪 Test with coverage 📊
+
+on:
+  workflow_call:
+
+jobs:
+  coverage:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+      - name: ⚙️ Install lcov
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install lcov
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: ⚙️ Flutter pub get
+        run: flutter pub get
+      - name: 🧪 Run tests with coverage
+        run: ././scripts/test-with-coverage.sh ${{ github.workspace }} ${{ github.workspace }} gamemark
+      - name: 🧪 Combine coverage
+        run: ${{ github.workspace }}/scripts/combine-coverage.sh ${{ github.workspace }}
+      - name: 🔍️ Check events
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Event ref: ${{ github.event.ref }}"
+      - name: 🥤 Extract test coverage percentage
+        if: github.event_name == 'pull_request'
+        run: |
+          ././scripts/generate-html-coverage.sh ${{ github.workspace }}
+          grep -o '.*headerCovTableEntryLo.*' coverage_report/index.html | sed -E  's/.*>(.*) %<.*/\1/' > coverage_percentage.txt
+          percentage=$(cat coverage_percentage.txt)
+          echo "Coverage percentage: $percentage"
+          echo "coverage_percentage=$percentage" >> $GITHUB_ENV
