@@ -23,7 +23,7 @@ jobs:
       - name: ⚙️ Flutter pub get
         run: flutter pub get
       - name: 🧪 Run tests with coverage
-        run: ././scripts/test-with-coverage.sh ${{ github.workspace }} ${{ github.workspace }} gamemark
+        run: ././scripts/test-with-coverage.sh ${{ github.workspace }} ${{ github.workspace }} verbsnap
       - name: 🧪 Combine coverage
         run: ${{ github.workspace }}/scripts/combine-coverage.sh ${{ github.workspace }}
       - name: 🔍️ Check events
