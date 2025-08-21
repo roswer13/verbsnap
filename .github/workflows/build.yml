@@ -30,7 +30,7 @@ jobs:
       - name: ⚙️ Flutter pub get
         run: flutter pub get
       - name: ⚠️ℹ️ Run Dart analysis for app package
-        uses: zgosalvez/github-actions-analyze-dart@v2.0.9
+        uses: zgosalvez/github-actions-analyze-dart@v3
         with:
           working-directory: "${{github.workspace}}"
       - name: 📡 Run flutter analyze
@@ -49,7 +49,7 @@ jobs:
           fi
       - name: 📄 Upload analysis results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: analysis-results
           path: analysis_output.txt
