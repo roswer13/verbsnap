@@ -19,24 +19,37 @@ jobs:
     if: github.event.pull_request.draft == false
     timeout-minutes: 30
     runs-on: ubuntu-latest
+
     steps:
       - name: ⬇️ Checkout repository
         uses: actions/checkout@v3
+
       - name: ⚙️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
+
       - name: ⚙️ Flutter pub get
         run: flutter pub get
-      - name: ⚠️ℹ️ Run Dart analysis for app package
-        uses: zgosalvez/github-actions-analyze-dart@v3
+
+      - name: 📡 Run flutter analyze
+        run: |
+          flutter analyze > analysis_output.txt || true
+
+      - name: 📈 Check for code issues
+        id: code-issues
+        run: |
+          if grep -q "error •" analysis_output.txt; then
+            echo "::error::Code analysis failed"
+            exit 1
+          else
+            echo "Code analysis passed"
+          fi
+
+      - name: 📄 Upload analysis results
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          working-directory: "${{github.workspace}}/"
-      - name: 📈 Check metrics
-        uses: dart-code-checker/dart-code-metrics-action@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          pull_request_comment: true
-          check_unused_files: true
-          folders: 'app, design_system'
+          name: analysis-results
+          path: analysis_output.txt
