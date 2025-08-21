@@ -8,6 +8,7 @@ done < <( ls "$1/coverage/" )
 eval lcov "${LCOV_INPUT_FILES}" -o $PROJECT_ROOT_PATH/coverage_report/combined_lcov.info
 
 lcov --remove $PROJECT_ROOT_PATH/coverage_report/combined_lcov.info \
+ "*/lib/main.dart" \
   "*.gr.dart" \
   "*.g.dart" \
   "*.freezed.dart" \
@@ -15,4 +16,5 @@ lcov --remove $PROJECT_ROOT_PATH/coverage_report/combined_lcov.info \
   "*.i69n.dart" \
   "*/generated/*" \
   "*.theme_extension.dart" \
+  --ignore-errors unused \
   -o $PROJECT_ROOT_PATH/coverage_report/cleaned_combined_lcov.info
