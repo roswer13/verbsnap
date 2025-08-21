@@ -13,3 +13,43 @@ jobs:
     name: 🧪 Test
     uses: ./.github/workflows/_test_with_coverage.yml
     secrets: inherit
+
+  analyze:
+    name: Analyze
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: ⚙️ Flutter pub get
+        run: flutter pub get
+      - name: ⚠️ℹ️ Run Dart analysis for app package
+        uses: zgosalvez/github-actions-analyze-dart@v2.0.9
+        with:
+          working-directory: "${{github.workspace}}"
+      - name: 📡 Run flutter analyze
+        run: |
+          cd ${{github.workspace}}
+          flutter analyze > analysis_output.txt
+        continue-on-error: true
+      - name: 📈 Check for code issues
+        id: code-issues
+        run: |
+          if grep -q "error" analysis_output.txt; then
+            echo "::error::Code analysis failed"
+            exit 1
+          else
+            echo "Code analysis passed"
+          fi
+      - name: 📄 Upload analysis results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: analysis-results
+          path: analysis_output.txt

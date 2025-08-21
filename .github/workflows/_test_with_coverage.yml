@@ -26,7 +26,12 @@ jobs:
         run: ././scripts/test-with-coverage.sh ${{ github.workspace }} ${{ github.workspace }} verbsnap
       - name: 🧪 Combine coverage
         run: ././scripts/combine-coverage.sh ${{ github.workspace }}
-      - name: 🔍️ Check events
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Event ref: ${{ github.event.ref }}"
+      - name: 🧪✅❌ Publish test results
+        id: compute_test_results
+        uses: dorny/test-reporter@v1.6.0
+        with:
+          name: '🧪📊 Unit tests report'
+          path: test_reports/*_test_report.json
+          reporter: 'flutter-json'
+          max-annotations: '50'
+          token: ${{ secrets.GITHUB_TOKEN }}
