@@ -22,5 +22,21 @@ jobs:
           cache: true
       - name: ⚙️ Flutter pub get
         run: flutter pub get
-      - name: 🧪 Run tests with coverage
+      - name: 🧪 Run tests
         run: flutter test
+      - name: 🧪 Run tests with coverage
+        run: ././scripts/test-with-coverage.sh ${{ github.workspace }} ${{ github.workspace }} verbsnap
+      - name: 🧪 Combine coverage
+        run: ${{ github.workspace }}/scripts/combine-coverage.sh ${{ github.workspace }}
+      - name: 🔍️ Check events
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Event ref: ${{ github.event.ref }}"
+      - name: 🥤 Extract test coverage percentage
+        if: github.event_name == 'pull_request'
+        run: |
+          ././scripts/generate-html-coverage.sh ${{ github.workspace }}
+          grep -o '.*headerCovTableEntryLo.*' coverage_report/index.html | sed -E  's/.*>(.*) %<.*/\1/' > coverage_percentage.txt
+          percentage=$(cat coverage_percentage.txt)
+          echo "Coverage percentage: $percentage"
+          echo "coverage_percentage=$percentage" >> $GITHUB_ENV
