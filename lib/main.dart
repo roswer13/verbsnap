@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:verbsnap/src/presentation/auth/login/LoginPage.dart';
-import 'package:verbsnap/src/presentation/auth/register/RegisterPage.dart';
-import 'package:verbsnap/src/presentation/home/HomePage.dart';
+import 'package:verbsnap/src/presentation/auth/login/login_page.dart';
+import 'package:verbsnap/src/presentation/auth/register/register_page.dart';
+import 'package:verbsnap/src/presentation/home/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,11 +18,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      initialRoute: 'login',
+      initialRoute: LoginPage.routeName,
       routes: {
-        'login': (context) => const LoginPage(),
-        'register': (context) => const RegisterPage(),
-        'home': (context) => const HomePage(),
+        LoginPage.routeName: (_) => const LoginPage(),
+        RegisterPage.routeName: (_) => const RegisterPage(),
+        HomePage.routeName: (_) => const HomePage(),
       },
     );
   }
