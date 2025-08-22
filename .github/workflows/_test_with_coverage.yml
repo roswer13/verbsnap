@@ -1,0 +1,43 @@
+name: 🧪 Test with coverage 📊
+
+on:
+  workflow_call:
+
+jobs:
+  coverage:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Install lcov
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install lcov
+
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: ⚙️ Flutter pub get
+        run: flutter pub get
+
+      - name: 🧪 Run tests with coverage
+        run: ././scripts/test-with-coverage.sh ${{ github.workspace }} ${{ github.workspace }} verbsnap
+
+      - name: 🧪 Combine coverage
+        run: ././scripts/combine-coverage.sh ${{ github.workspace }}
+
+      - name: 🧪✅❌ Publish test results
+        id: compute_test_results
+        uses: dorny/test-reporter@v1.6.0
+        with:
+          name: '🧪📊 Unit tests report'
+          path: test_reports/*_test_report.json
+          reporter: 'flutter-json'
+          max-annotations: '50'
+          token: ${{ secrets.GITHUB_TOKEN }}

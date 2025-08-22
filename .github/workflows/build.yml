@@ -1,0 +1,55 @@
+name: 🔨🧪 Build & Test
+
+permissions: write-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+on: [push]
+
+jobs:
+  testAndCoverage:
+    name: 🧪 Test
+    uses: ./.github/workflows/_test_with_coverage.yml
+    secrets: inherit
+
+  analyze:
+    name: Analyze
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: ⚙️ Flutter pub get
+        run: flutter pub get
+
+      - name: 📡 Run flutter analyze
+        run: |
+          flutter analyze > analysis_output.txt || true
+
+      - name: 📈 Check for code issues
+        id: code-issues
+        run: |
+          if grep -q "error •" analysis_output.txt; then
+            echo "::error::Code analysis failed"
+            exit 1
+          else
+            echo "Code analysis passed"
+          fi
+
+      - name: 📄 Upload analysis results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analysis-results
+          path: analysis_output.txt
