@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:verbsnap/src/design/design.dart';
 import 'package:verbsnap/src/presentation/auth/login/login_page.dart';
 import 'package:verbsnap/src/presentation/auth/register/register_page.dart';
 import 'package:verbsnap/src/presentation/home/home_page.dart';
@@ -15,9 +16,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: MaterialTheme(TextTheme()).light(),
+      darkTheme: MaterialTheme(TextTheme()).dark(),
+      themeMode: ThemeMode.system,
       initialRoute: LoginPage.routeName,
       routes: {
         LoginPage.routeName: (_) => const LoginPage(),
