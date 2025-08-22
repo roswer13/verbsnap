@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: MaterialTheme(TextTheme()).light(),
+      darkTheme: MaterialTheme(TextTheme()).dark(),
       themeMode: ThemeMode.system,
-      initialRoute: HomePage.routeName,
+      initialRoute: LoginPage.routeName,
       routes: {
         LoginPage.routeName: (_) => const LoginPage(),
         RegisterPage.routeName: (_) => const RegisterPage(),
